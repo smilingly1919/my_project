@@ -1,0 +1,106 @@
+## 🔹 命令 1：
+
+```python
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+```
+
+---
+
+## 🔹 命令 2（Notebook 环境中常用）：
+
+```python
+sys.path.append(os.path.abspath('..'))
+```
+
+---
+
+## ✅ 背景知识：`sys.path`
+
+`sys.path` 是 Python 用来查找模块的“路径列表”。
+
+当你运行：
+
+```python
+from sdf_utils import a
+```
+
+Python 会依次在 `sys.path` 中列出的目录里查找 `sdf_utils` 这个模块。
+
+所以你如果手动往 `sys.path` 添加一个目录，Python 就会在那个目录中搜索模块。
+
+---
+
+## 🧠 逐步解析命令 1：
+
+```python
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+```
+
+这个表达式结构稍复杂，我们分段讲解：
+
+### ① `__file__`
+
+* 当前 `.py` 文件的完整路径（自动变量）
+* 例如：`C:/Users/pengfan/Desktop/my_project/max/test.py`
+
+### ② `os.path.dirname(__file__)`
+
+* 获取当前文件所在的目录
+* 例如：`C:/Users/pengfan/Desktop/my_project/max`
+
+### ③ `os.path.join(..., '..')`
+
+* `'..'` 表示“上一级目录”
+* 结果是：`C:/Users/pengfan/Desktop/my_project`
+
+### ④ `os.path.abspath(...)`
+
+* 把路径转换为绝对路径（跨平台兼容）
+* 仍然是：`C:/Users/pengfan/Desktop/my_project`
+
+### ⑤ `sys.path.append(...)`
+
+* 把项目的根目录（`my_project`）添加到 Python 的模块搜索路径中。
+
+---
+
+### ✅ 结论：
+
+> ✅ 这个命令的作用是：
+> **在 `.py` 文件中自动把“项目根目录”加入模块搜索路径，确保可以导入包里的模块**
+
+---
+
+## 🧠 命令 2：适用于 Jupyter Notebook 等交互环境
+
+```python
+sys.path.append(os.path.abspath('..'))
+```
+
+### ✅ 含义解析：
+
+* `'..'` 是上一级目录（相对于当前目录）
+* `os.path.abspath('..')` 得到的是当前 Notebook 的上一级绝对路径
+* 添加到 `sys.path` 后，Python 就能从上级目录查找模块
+
+---
+
+### ✅ 举例：
+
+如果你打开的是：
+
+```
+my_project/max/test.ipynb
+```
+
+那么：
+
+```python
+os.path.abspath('..')  →  C:/Users/pengfan/Desktop/my_project
+```
+
+这样你就可以：
+
+```python
+from sdf_utils import a
+```
