@@ -1,7 +1,7 @@
 import numpy as np
 import sdf_helper as sh
 
-def load_field(file_path, species):
+def load_density(file_path, species):
     """
     加载指定粒子种类的坐标和场数据。
 
@@ -27,7 +27,7 @@ def load_field(file_path, species):
     return {'x': x, 'y': y, 'z': z, 'ne': ne, 'ek': ek}
 
 
-def load_density(file_path):
+def load_field(file_path):
     """
     加载电场和磁场数据。
 
@@ -38,7 +38,10 @@ def load_density(file_path):
     - dict 包含电场分量 'Ex','Ey','Ez' 和磁场分量 'Bx','By','Bz'
     """
     data = sh.getdata(file_path)
-
+    grid_data = data.Grid_Grid_mid.data
+    x = np.array(grid_data[0])
+    y = np.array(grid_data[1])
+    z = np.array(grid_data[2]) if len(grid_data) == 3 else None
     return {
         'Ex': data.Electric_Field_Ex.data,
         'Ey': data.Electric_Field_Ey.data,
@@ -46,6 +49,7 @@ def load_density(file_path):
         'Bx': data.Magnetic_Field_Bx.data,
         'By': data.Magnetic_Field_By.data,
         'Bz': data.Magnetic_Field_Bz.data,
+        'x': x, 'y': y, 'z': z,
     }
 
 
@@ -74,3 +78,28 @@ def load_idall(file_path, species, subset):
     pz = getattr(data, f"Particles_Pz_{subset}_{species}").data
 
     return {'x': x, 'y': y, 'z': z, 'px': px, 'py': py, 'pz': pz}
+
+def load_distfun(file_path, species, dist_type):
+    data = sh.getdata(file_path)
+
+    dist_key = f"dist_fn_{dist_type}_{species}"
+    grid_key = f"Grid_{dist_type}_{species}"
+
+    dist = getattr(data, dist_key).data
+    grid = getattr(data, grid_key).data
+
+    if isinstance(grid, tuple):
+        return {
+            'dist': dist,
+            'grid_x': grid[0],
+            'grid_y': grid[1],
+        }
+    else:
+        return {
+            'dist': dist,
+            'grid': grid,
+        }
+
+
+
+
